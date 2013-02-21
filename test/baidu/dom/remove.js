@@ -26,6 +26,7 @@ test('text node', function() {
 	var div = document.body.appendChild(document.createElement("div"));
 	var node = div.appendChild(document.createTextNode("test"));
 	baidu.dom.remove(node);
+    console.log('div.innerHTML', div.innerHTML)
 	equals(div.innerHTML, '', 'text node is removed');
 	baidu.dom.remove(div);
 });

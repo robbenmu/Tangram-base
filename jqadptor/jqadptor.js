@@ -133,42 +133,68 @@
         return null;
     }
     
-    
+    var _g = function (id) {
+        if ($.type(id) === 'string') {
+            return document.getElementById(id);
+        }
+        return id;
+    };
+
     T.query = T.dom.query = $.find;
+
+    /*
+        TODO hasClass、toggleClass方法与tangram不兼容不支持class顺序调换
+    */
+    /*
+        TODO show方法与tangram内部处理不一样，会将元素置为block
+    */
+
+    /*
+        TODO remove 方法不会与tangram一样引起异常，见remove测试用例最后一个case
+    */
+    ('addClass removeClass toggleClass ' + 
+    'empty hide show toggle remove ' + 
+    '!hasClass').replace(/(\!)?(\w+)/g, function(match, p1, p2) {
+        T[p2] = T.dom[p2] = function() {
+            var args = Array.prototype.slice.call(arguments),
+                element = $(_g(args[0])),
+                result;
+            args = args.splice(1);
+
+            if (p1) {
+                args = [$.trim(args)];
+            }
+
+            result = element[p2].apply(element, args);
+            return !p1 ? g(element.get(0)) : result;
+        }
+    });
     
-    // ('addClass children contains empty first hasClass' +
-//     ' hide insertAfter insertBefore last next prev ready remove removeClass show' +
-//     ' toggle toggleClass').replace(/\w+/g, function(match){
-//         T[match] = T.dom[match] = function(){
-//             console.log(arguments)
-//             var args = Array.prototype.slice.call(arguments),
-//                 element = $(args[0]),
-//                 result = element[match].apply(element, args.splice(1));
-//                 
-//             return result;
-//         }
-//     });
-    T.dom.contains = function(container, contained){
+    'insertAfter insertBefore'.replace(/\w+/g, function(match){
+        T[match] = T.dom[match] = function(newElement, existElement){
+            newElement = _g(newElement);
+            existElement = _g(existElement);
+            return $(newElement)[match](existElement).get(0);
+        }
+    });
+
+    'first last next prev children'.replace(/\w+/g, function(match) {
+        T.dom[match] = function() {
+            console.log(':' + match + '-chlid')
+            var args = Array.prototype.slice.call(arguments),
+                element = $(g(args[0]));
+
+            return match === 'children' ? 
+                element.children().get() : element.children()[match]().get(0);
+        };
+    });
+    
+    T.dom.contains = function(container, contained) {
         container = g(container);
         contained = g(contained);
         return $.contains(container, contained);
     };
-    
-    ('addClass toggleClass ' +
-    'empty hide remove show toggle '+
-    'insertAfter insertBefore ' +
-    '$first $last $next $prev $children ' +
-    '$hasClass ').replace(/(\$)?(\w+)/g, function(match, p1, p2){
-        console.log(arguments)
-        T[p2] = T.dom[p2] = function(){
-            var args = Array.prototype.slice.call(arguments),
-                element = $(args[0]);
-                result = element[p2].apply(element, args.splice(1));
-                console.log(element[p2])
-            return p1 ? result : g(element.get(0));
-        }
-    });
-    
+
 
 
 
