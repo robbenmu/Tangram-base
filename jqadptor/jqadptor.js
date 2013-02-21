@@ -178,14 +178,14 @@
         }
     });
 
-    'first last next prev children'.replace(/\w+/g, function(match) {
-        T.dom[match] = function() {
-            console.log(':' + match + '-chlid')
+    'first last @next @prev children'.replace(/(@)?(\w+)/g, function(match, p1, p2) {
+        T.dom[p2] = function() {
             var args = Array.prototype.slice.call(arguments),
-                element = $(g(args[0]));
-
-            return match === 'children' ? 
-                element.children().get() : element.children()[match]().get(0);
+                element = $(g(args[0])),
+                attr = !p1 ? 'children' : p2;
+                
+            return p1 ? element[p2]().get(0) :(p2 === 'children' ? 
+            element.children().get() : element.children()[match]().get(0));
         };
     });
     
@@ -194,7 +194,8 @@
         contained = g(contained);
         return $.contains(container, contained);
     };
-
+    
+    T.dom.ready = $(document).ready;
 
 
 
