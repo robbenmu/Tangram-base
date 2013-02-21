@@ -23,7 +23,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 					header("Location:notexist.php");
 					break;
 				case 500:
-					echo $status;
+                    // echo $status;
 					header("HTTP/1.1 500 Internal Server Error");
 					break;
 				default:
