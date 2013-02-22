@@ -86,7 +86,8 @@ test("float,color,display", function() {
 		value : 'left'
 	});
 	var color = baidu.dom.getStyle(div, 'color').toLowerCase();
-	ok(color == '#ff0000' || color == 'red' || color == 'rgb(255,0,0)',
+
+	ok(color == '#ff0000' || color == 'red' || color == 'rgb(255, 0, 0)',
 			'color red');
 	check(img, {
 		style : 'display',
@@ -109,10 +110,10 @@ test("get style from css file", function() {
 	var head = document.getElementsByTagName("head").item(0);
 	div.appendChild(p);
 	div.appendChild(img);
-	$(div).attr('className', "content");
-	$(div1).attr('className', 'content');
-	$(img).attr('className', 'content');
-	$(p).attr('className', 'pid');
+	$(div).attr('class', "content"); // 原来case有bug，class写为了className，新版的jq已经改为class
+	$(div1).attr('class', 'content');
+	$(img).attr('class', 'content');
+	$(p).attr('class', 'pid');
 
 	var handle = function() {
 		/** IE的float属性叫styleFloat，firefox则是cssFloat * */
@@ -125,7 +126,8 @@ test("get style from css file", function() {
 			value : '200px'
 		});
 		var color = baidu.dom.getStyle(div, 'color').toLowerCase();
-		ok(color == '#00ff00' || color == 'rgb(0,255,0)'
+
+		ok(color == '#00ff00' || color == 'rgb(0, 255, 0)'
 				|| color == 'rgb(0, 255, 0)', 'color');
 		check(div, {
 			style : 'position',

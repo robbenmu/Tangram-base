@@ -173,25 +173,35 @@
     */
     ('addClass removeClass toggleClass ' + 
     'empty hide show toggle remove ' + 
-    '!hasClass !getText').replace(/(\!)?(\w+)/g, function(match, p1, p2) {
-        T[p2] = T.dom[p2] = function() {
+    '!hasClass @getText ' +
+    '#setPosition @getPostion ' +
+    '#setAttr @getAttr '+
+    '#setStyle @getStyle').replace(/(\!)?(@)?(#)?(\w+)/g, function(match, p1, p2, p3, p4) {
+        T[p4] = T.dom[p4] = function() {
             var args = Array.prototype.slice.call(arguments),
                 element = $(_g(args[0])),
-                action = p2,
+                action = p4,
                 result;
             args = args.splice(1);
+            
             if (p1) {
                 args = [$.trim(args)];
-                if (action.indexOf('get') > -1){
-                    action = action.replace('get', '').toLocaleLowerCase();
-                    args = null;
-                }
+            }
+            
+            if (p2 || p3){
+                action = action.replace(/[sg]et/, '').toLocaleLowerCase();
+            }
+            
+            if (action === 'style') {
+                action = 'css';
             }
             result = element[action].apply(element, args);
-            return !p1 ? g(element.get(0)) : result;
+            return (!p1 && !p2) ? g(element.get(0)) : result;
         };
     });
     
+    T.getStyles = T.dom.getStyles = T.dom.getStyle;
+
     'insertAfter insertBefore'.replace(/\w+/g, function(match){
         T[match] = T.dom[match] = function(newElement, existElement){
             newElement = _g(newElement);
@@ -255,6 +265,8 @@
         opt_attributes = opt_attributes || {};
         return $('<' + tagName + '/>').attr(opt_attributes).get(0);
     };
+    
+    T.dom._styleFixer = {};
     
 
     
