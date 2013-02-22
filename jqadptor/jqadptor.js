@@ -1,4 +1,14 @@
 /*global T:false baidu:false*/
+
+// 目的不是删掉tangram，保留tangram好的部分，将dom、事件等替换为jquery。
+// 
+// 1.利用jq资源快速开发。
+// 
+// 2.更好的兼容性及bug处理。
+// 
+// 3.不是为了链式等语法糖。
+
+
 (function(win, doc, undefined) {
     var T = win.T = win.baidu = {
         ver: "0.1"
@@ -159,22 +169,25 @@
     */
 
     /*
-        TODO remove 方法不会与tangram一样引起异常，见remove测试用例最后一个case
+        TODO remove\getText 方法不会与tangram一样引起异常，见remove测试用例最后一个case
     */
     ('addClass removeClass toggleClass ' + 
     'empty hide show toggle remove ' + 
-    '!hasClass').replace(/(\!)?(\w+)/g, function(match, p1, p2) {
+    '!hasClass !getText').replace(/(\!)?(\w+)/g, function(match, p1, p2) {
         T[p2] = T.dom[p2] = function() {
             var args = Array.prototype.slice.call(arguments),
                 element = $(_g(args[0])),
+                action = p2,
                 result;
             args = args.splice(1);
-
             if (p1) {
                 args = [$.trim(args)];
+                if (action.indexOf('get') > -1){
+                    action = action.replace('get', '').toLocaleLowerCase();
+                    args = null;
+                }
             }
-
-            result = element[p2].apply(element, args);
+            result = element[action].apply(element, args);
             return !p1 ? g(element.get(0)) : result;
         };
     });
@@ -193,7 +206,7 @@
                 element = $(_g(args[0])),
                 attr = !p1 ? 'children' : p2;
                 
-            return p1 ? element[p2]().get(0) :(p2 === 'children' ? 
+            return p1 ? element[p2]().get(0) : (p2 === 'children' ? 
             element.children().get() : element.children()[match]().get(0));
         };
     });
