@@ -131,7 +131,7 @@
             return id;
         }
         return null;
-    }
+    };
     
     var _g = function (id) {
         if ($.type(id) === 'string') {
@@ -141,6 +141,15 @@
     };
 
     T.query = T.dom.query = $.find;
+    
+    T.q = T.Q = T.dom.q = function(className, element, tagName){
+        console.log(arguments)
+        element = element || doc.body;
+        tagName = tagName || '';
+        className = $.trim(className) ? ('.' + className) : '';
+        var result = $(tagName + className, element);
+        return result.length ? result.get() : [];
+    };
 
     /*
         TODO hasClass、toggleClass方法与tangram不兼容不支持class顺序调换
@@ -167,7 +176,7 @@
 
             result = element[p2].apply(element, args);
             return !p1 ? g(element.get(0)) : result;
-        }
+        };
     });
     
     'insertAfter insertBefore'.replace(/\w+/g, function(match){
@@ -175,17 +184,43 @@
             newElement = _g(newElement);
             existElement = _g(existElement);
             return $(newElement)[match](existElement).get(0);
-        }
+        };
     });
 
     'first last @next @prev children'.replace(/(@)?(\w+)/g, function(match, p1, p2) {
         T.dom[p2] = function() {
             var args = Array.prototype.slice.call(arguments),
-                element = $(g(args[0])),
+                element = $(_g(args[0])),
                 attr = !p1 ? 'children' : p2;
                 
             return p1 ? element[p2]().get(0) :(p2 === 'children' ? 
             element.children().get() : element.children()[match]().get(0));
+        };
+    });
+    
+    'getParent getAncestorBy getAncestorByClass getAncestorByTag'.replace(/\w+/g, function(match, p1, p2){
+        T.dom[match] = function(){
+            var args = Array.prototype.slice.call(arguments),
+                element = $(_g(args[0])),
+                result;
+            
+                switch(match){
+                case 'getParent':
+                    result = element.parent();
+                    break;
+                case 'getAncestorBy':
+                    element.parents().each(function(i, item){
+                        if (args[1](item)) {
+                            result = $(item);
+                            return false;
+                        }
+                    });
+                    break;
+                default:
+                    result = element.parents((match === 'getAncestorByClass' ? '.' : '') + args[1]);
+                }
+                        
+            return (result && result.length) ? result.get(0) : null;
         };
     });
     
@@ -196,9 +231,18 @@
     };
     
     T.dom.ready = $(document).ready;
+    
+    T.dom.opacity = function(element, opacity){
+        return $(element).css('opacity', opacity);
+    };
+    
+    T.dom.create = function(tagName, opt_attributes){
+        opt_attributes = opt_attributes || {};
+        return $('<' + tagName + '/>').attr(opt_attributes).get(0);
+    };
+    
 
-
-
+    
 
 
 })(window, document);

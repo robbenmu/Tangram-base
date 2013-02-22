@@ -2,6 +2,7 @@ module('baidu.dom.create')
 
 test('create', function() {
 	var div = baidu.dom.create('div');
+    console.log(div)
 	equals(div.tagName, 'DIV', 'create a div');
 })
 

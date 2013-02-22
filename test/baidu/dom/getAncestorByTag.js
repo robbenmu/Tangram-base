@@ -23,6 +23,7 @@ test("html or body", function() {
 	document.body.appendChild(div);
 	equal(baidu.dom.getAncestorByTag(document.body,'html'),document.documentElement,'get html ancestor');
 	equal(baidu.dom.getAncestorByTag(div,'body'),document.body,'get body ancestor');
+    console.log(baidu.dom.getAncestorByTag(div,'html'))
 	equal(baidu.dom.getAncestorByTag(div,'html'),document.documentElement,'get html ancestor of div');
 	document.body.removeChild(div);
 })
