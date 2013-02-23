@@ -26,9 +26,11 @@
             var globelHandler = T.ajax[type];
 
             switch (type) {
+                
             case 'onsuccess':
                 callback(jqXHR, data);
                 break;
+                
             case 'ontimeout':
                 if (textStatus === 'timeout') {
                     callback(data);
@@ -37,6 +39,7 @@
                     errorCallback(data);
                 }
                 break;
+                
             default:
                 callback(data);
                 $.isFunction(globelHandler) && globelHandler(data);
@@ -47,6 +50,7 @@
 
     var statusMatch = /^on(\d+)$/i; //解析http状态码
     var request = T.ajax.request = function(url, opt_options) {
+        
         var options = opt_options || {},
             data = options.data || "",
             async = !(options.async === false),
@@ -64,6 +68,7 @@
             statusCode = {};
 
         $.each(opt_options, function(key, val) {
+            
             var result = statusMatch.exec(key);
 
             if (result) {
@@ -88,12 +93,14 @@
     };
 
     T.ajax.get = function(url, onsuccess) {
+        
         return request(url, {
             'onsuccess': onsuccess
         });
     };
 
     T.ajax.post = function(url, data, onsuccess) {
+        
         return request(url, {
             'onsuccess': onsuccess,
             'method': 'POST',
@@ -102,6 +109,7 @@
     };
 
     T.ajax.form = function(form, options) {
+        
         options = options || {};
 
         var el = $(form),
@@ -240,9 +248,11 @@
                 result;
             
                 switch(match){
+                    
                 case 'getParent':
                     result = element.parent();
                     break;
+                    
                 case 'getAncestorBy':
                     element.parents().each(function(i, item){
                         if (args[1](item)) {
@@ -251,6 +261,7 @@
                         }
                     });
                     break;
+                    
                 default:
                     result = element.parents((match === 'getAncestorByClass' ? '.' : '') + args[1]);
                 }
