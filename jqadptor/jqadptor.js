@@ -158,7 +158,6 @@
     T.query = T.dom.query = $.find;
 
     T.q = T.Q = T.dom.q = function(className, element, tagName) {
-        console.log(arguments)
         element = element || doc.body;
         tagName = tagName || '';
         className = $.trim(className) ? ('.' + className) : '';
@@ -166,14 +165,14 @@
         return result.length ? result.get() : [];
     };
 
-/*
+    /*
         TODO hasClass、toggleClass方法与tangram不兼容不支持class顺序调换
     */
-/*
+    /*
         TODO show方法与tangram内部处理不一样，会将元素置为block
     */
 
-/*
+    /*
         TODO remove\getText 方法不会与tangram一样引起异常，见remove测试用例最后一个case
     */
     ('addClass removeClass toggleClass ' + 
