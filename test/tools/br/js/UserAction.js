@@ -758,7 +758,9 @@ var UserAction =
 		} : op;
 		var pw = op.win || window, w, f, url = '', id = typeof op.id == 'undefined' ? 'f'
 				: op.id, fid = 'iframe#' + id;
-
+        
+        
+        
 		op.finish = function() {
 			pw.$(fid).unbind();
 			setTimeout(function() {
@@ -773,6 +775,8 @@ var UserAction =
 			pw.$('div#div' + id).append('<iframe id="' + id + '"></iframe>');
 		}
 		op.onafterstart && op.onafterstart($('iframe#f')[0]);
+        
+        
 		pw.$('script').each(function() {
 			if (this.src && this.src.indexOf('import.php') >= 0) {
 				url = this.src.split('import.php')[1];
@@ -862,6 +866,7 @@ var UserAction =
 		/**
 		 * 支持release分之，此处应该直接返回
 		 */
+         return callback();
 		if (location.search.indexOf("release=true") >= 0) {
 			if (callback && typeof callback == "function")
 				callback();

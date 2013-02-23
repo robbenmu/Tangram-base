@@ -6,7 +6,6 @@
 // 
 // 2.更好的兼容性及bug处理。
 
-
 (function(win, doc, undefined) {
     var T = win.T = win.baidu = {
         ver: "0.1"
@@ -26,11 +25,11 @@
             var globelHandler = T.ajax[type];
 
             switch (type) {
-                
+
             case 'onsuccess':
                 callback(jqXHR, data);
                 break;
-                
+
             case 'ontimeout':
                 if (textStatus === 'timeout') {
                     callback(data);
@@ -39,7 +38,7 @@
                     errorCallback(data);
                 }
                 break;
-                
+
             default:
                 callback(data);
                 $.isFunction(globelHandler) && globelHandler(data);
@@ -50,7 +49,7 @@
 
     var statusMatch = /^on(\d+)$/i; //解析http状态码
     var request = T.ajax.request = function(url, opt_options) {
-        
+
         var options = opt_options || {},
             data = options.data || "",
             async = !(options.async === false),
@@ -68,7 +67,7 @@
             statusCode = {};
 
         $.each(opt_options, function(key, val) {
-            
+
             var result = statusMatch.exec(key);
 
             if (result) {
@@ -93,14 +92,14 @@
     };
 
     T.ajax.get = function(url, onsuccess) {
-        
+
         return request(url, {
             'onsuccess': onsuccess
         });
     };
 
     T.ajax.post = function(url, data, onsuccess) {
-        
+
         return request(url, {
             'onsuccess': onsuccess,
             'method': 'POST',
@@ -109,7 +108,7 @@
     };
 
     T.ajax.form = function(form, options) {
-        
+
         options = options || {};
 
         var el = $(form),
@@ -148,8 +147,8 @@
         }
         return null;
     };
-    
-    var _g = function (id) {
+
+    var _g = T.dom._g = function(id) {
         if ($.type(id) === 'string') {
             return document.getElementById(id);
         }
@@ -157,8 +156,8 @@
     };
 
     T.query = T.dom.query = $.find;
-    
-    T.q = T.Q = T.dom.q = function(className, element, tagName){
+
+    T.q = T.Q = T.dom.q = function(className, element, tagName) {
         console.log(arguments)
         element = element || doc.body;
         tagName = tagName || '';
@@ -167,21 +166,21 @@
         return result.length ? result.get() : [];
     };
 
-    /*
+/*
         TODO hasClass、toggleClass方法与tangram不兼容不支持class顺序调换
     */
-    /*
+/*
         TODO show方法与tangram内部处理不一样，会将元素置为block
     */
 
-    /*
+/*
         TODO remove\getText 方法不会与tangram一样引起异常，见remove测试用例最后一个case
     */
     ('addClass removeClass toggleClass ' + 
     'empty hide show toggle remove ' + 
-    '!hasClass @getText ' +
-    '#setPosition @getPostion ' +
-    '#setAttr @getAttr '+
+    '!hasClass @getText ' + 
+    '#setPosition @getPostion ' + 
+    '#setAttr @getAttr ' + 
     '#setStyle @getStyle').replace(/(\!)?(@)?(#)?(\w+)/g, function(match, p1, p2, p3, p4) {
         T[p4] = T.dom[p4] = function() {
             var args = Array.prototype.slice.call(arguments),
@@ -189,15 +188,15 @@
                 action = p4,
                 result;
             args = args.splice(1);
-            
+
             if (p1) {
                 args = [$.trim(args)];
             }
-            
-            if (p2 || p3){
+
+            if (p2 || p3) {
                 action = action.replace(/[sg]et/, '').toLocaleLowerCase();
             }
-            
+
             if (action === 'style') {
                 action = 'css';
             }
@@ -205,27 +204,27 @@
             return (!p1 && !p2) ? g(element.get(0)) : result;
         };
     });
-    
+
     T.getStyles = T.dom.getStyles = T.dom.getStyle;
     T.setAttrs = T.dom.setAttrs = T.dom.setAttr;
 
-    'insertAfter insertBefore'.replace(/\w+/g, function(match){
-        T[match] = T.dom[match] = function(newElement, existElement){
+    'insertAfter insertBefore'.replace(/\w+/g, function(match) {
+        T[match] = T.dom[match] = function(newElement, existElement) {
             newElement = _g(newElement);
             existElement = _g(existElement);
             return $(newElement)[match](existElement).get(0);
         };
     });
-    
-    T.insertHTML = T.dom.insertHTML = function(element, position, html){
-        
+
+    T.insertHTML = T.dom.insertHTML = function(element, position, html) {
+
         var pos = {
             'beforeBegin': 'before',
             'afterBegin': 'prepend',
             'beforeEnd': 'append',
             'afterEnd': 'after'
         };
-        
+
         return $(_g(element))[pos[position]](html).get(0);
 
     };
@@ -235,64 +234,128 @@
             var args = Array.prototype.slice.call(arguments),
                 element = $(_g(args[0])),
                 attr = !p1 ? 'children' : p2;
-                
-            return p1 ? element[p2]().get(0) : (p2 === 'children' ? 
-            element.children().get() : element.children()[match]().get(0));
+
+            return p1 ? element[p2]().get(0) : (p2 === 'children' ? element.children().get() : element.children()[match]().get(0));
         };
     });
-    
-    'getParent getAncestorBy getAncestorByClass getAncestorByTag'.replace(/\w+/g, function(match, p1, p2){
-        T.dom[match] = function(){
+
+    'getParent getAncestorBy getAncestorByClass getAncestorByTag'.replace(/\w+/g, function(match, p1, p2) {
+        T.dom[match] = function() {
             var args = Array.prototype.slice.call(arguments),
                 element = $(_g(args[0])),
                 result;
-            
-                switch(match){
-                    
-                case 'getParent':
-                    result = element.parent();
-                    break;
-                    
-                case 'getAncestorBy':
-                    element.parents().each(function(i, item){
-                        if (args[1](item)) {
-                            result = $(item);
-                            return false;
-                        }
-                    });
-                    break;
-                    
-                default:
-                    result = element.parents((match === 'getAncestorByClass' ? '.' : '') + args[1]);
-                }
-                        
+
+            switch (match) {
+
+            case 'getParent':
+                result = element.parent();
+                break;
+
+            case 'getAncestorBy':
+                element.parents().each(function(i, item) {
+                    if (args[1](item)) {
+                        result = $(item);
+                        return false;
+                    }
+                });
+                break;
+
+            default:
+                result = element.parents((match === 'getAncestorByClass' ? '.' : '') + args[1]);
+            }
+
             return (result && result.length) ? result.get(0) : null;
         };
     });
-    
-    
-    
+
+
+
     T.dom.contains = function(container, contained) {
         container = g(container);
         contained = g(contained);
         return $.contains(container, contained);
     };
-    
+
     T.dom.ready = $(document).ready;
-    
-    T.dom.opacity = function(element, opacity){
+
+    T.dom.opacity = function(element, opacity) {
         return $(element).css('opacity', opacity);
     };
-    
-    T.dom.create = function(tagName, opt_attributes){
+
+    T.dom.create = function(tagName, opt_attributes) {
         opt_attributes = opt_attributes || {};
         return $('<' + tagName + '/>').attr(opt_attributes).get(0);
     };
-    
-    T.dom._styleFixer = {};
-    
 
+    T.dom._styleFixer = {};
+
+    // event
+    T.event = {};
     
+    T.event._listeners = {};
+    
+    $.each({
+        'on': 'bind',
+        'un': 'unbind',
+        'fire': 'trigger'
+    }, function(key, val) {
+        T[key] = T.event[key] = function(element, type, listener) {
+            type = type.replace('on', '');
+            return $(_g(element))[val](type, listener);
+        };
+    });
+    
+    T.event.once = function(element, type, listener){
+        element = _g(element);
+        function onceListener(event){
+            listener.call(element,event);
+            baidu.event.un(element, type, onceListener);
+        } 
+    
+        baidu.event.on(element, type, onceListener);
+        return element;
+    };
+    
+    
+    var eventArg = T.EventArg = T.event.EventArg = T.event.get = function(event){
+        var result = $.event.fix(event);
+        result._event = event;
+        result.stop = function(){
+            result.stopPropagation()
+            result.preventDefault();
+        };
+        result._event = event;
+        return result;
+    };
+    
+    /*
+        TODO 考虑是否保留getEvent这个函数到其他文件
+    */
+    
+    T.event.getEvent = function(event) {
+        if (window.event) {
+            return window.event;
+        } else {
+            var f = arguments.callee;
+            do { //此处参考Qwrap框架 see http://www.qwrap.com/ by dengping
+                if (/Event/.test(f.arguments[0])) {
+                    return f.arguments[0];
+                }
+            } while (f = f.caller);
+            return null;
+        }
+    };
+
+    $.each({
+        'KeyCode': 'keyCode',
+        'PageX': 'pageX',
+        'PageY': 'pageY',
+        'Target': 'target'
+    }, function(key, val){
+        T.event['get' + key] = function(event){
+            return eventArg(event)[val];
+        }
+    });
 
 
 })(window, document);
