@@ -208,6 +208,19 @@
             return $(newElement)[match](existElement).get(0);
         };
     });
+    
+    T.insertHTML = T.dom.insertHTML = function(element, position, html){
+        
+        var pos = {
+            'beforeBegin': 'before',
+            'afterBegin': 'prepend',
+            'beforeEnd': 'append',
+            'afterEnd': 'after'
+        };
+        
+        return $(_g(element))[pos[position]](html).get(0);
+
+    };
 
     'first last @next @prev children'.replace(/(@)?(\w+)/g, function(match, p1, p2) {
         T.dom[p2] = function() {
