@@ -205,6 +205,10 @@
 
     T.getStyles = T.dom.getStyles = T.dom.getStyle;
     T.setAttrs = T.dom.setAttrs = T.dom.setAttr;
+    
+    T.dom.hasAttr = function (element, name){
+        return !!($(_g(element)).attr(name));
+    };
 
     'insertAfter insertBefore'.replace(/\w+/g, function(match) {
         T[match] = T.dom[match] = function(newElement, existElement) {
@@ -353,6 +357,8 @@
             return eventArg(event)[val];
         };
     });
+    
+
 
 
 })(window, document);
