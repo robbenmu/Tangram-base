@@ -171,7 +171,6 @@
     /*
         TODO show方法与tangram内部处理不一样，会将元素置为block
     */
-
     /*
         TODO remove\getText 方法不会与tangram一样引起异常，见remove测试用例最后一个case
     */
@@ -189,7 +188,7 @@
             args = args.splice(1);
 
             if (p1) {
-                args = [$.trim(args)];
+                args = [$.trim(args[0])];
             }
 
             if (p2 || p3) {
@@ -231,9 +230,8 @@
     'first last @next @prev children'.replace(/(@)?(\w+)/g, function(match, p1, p2) {
         T.dom[p2] = function() {
             var args = Array.prototype.slice.call(arguments),
-                element = $(_g(args[0])),
-                attr = !p1 ? 'children' : p2;
-
+                element = $(_g(args[0]));
+                
             return p1 ? element[p2]().get(0) : (p2 === 'children' ? element.children().get() : element.children()[match]().get(0));
         };
     });
@@ -353,7 +351,7 @@
     }, function(key, val){
         T.event['get' + key] = function(event){
             return eventArg(event)[val];
-        }
+        };
     });
 
 
