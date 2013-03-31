@@ -23,6 +23,7 @@ test("输入错误的url", function() {
 	defer.then(function(value) {
 		QUnit.ok(false, "unexpect to do this function");
 	}, function(obj) {
+    console.log(arguments)
 		QUnit.equal(obj.xhr.status, "404");
 		clearTimeout(teardown);
 		start();

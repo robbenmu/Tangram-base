@@ -9,8 +9,21 @@
 }
 </style>
 <script type="text/javascript" src="/jqadptor/jquery-1.9.1.js"></script>
+<script type='text/javascript' src='/jqadptor/array.js'></script>
+<script type='text/javascript' src='/jqadptor/object.js'></script>
+<script type='text/javascript' src='/jqadptor/browser.js'></script>
+<script type='text/javascript' src='/jqadptor/cookie.js'></script>
+<script type='text/javascript' src='/jqadptor/date.js'></script>
+<script type='text/javascript' src='/jqadptor/lang.js'></script>
+<script type='text/javascript' src='/jqadptor/number.js'></script>
+<script type='text/javascript' src='/jqadptor/page.js'></script>
+<script type='text/javascript' src='/jqadptor/string.js'></script>
+<script type='text/javascript' src='/jqadptor/sio.js'></script>
+<script type='text/javascript' src='/jqadptor/swf.js'></script>
+<script type='text/javascript' src='/jqadptor/url.js'></script>
+<script type='text/javascript' src='/jqadptor/json.js'></script>
+
 <script type='text/javascript' src='/jqadptor/jqadptor.js'></script>
-<script type='text/javascript' src='/jqadptor/tangram.js'></script>
 <?php
 // $release = preg_match('/release=true/i', $_SERVER['QUERY_STRING']);
 // if($release == 0 && array_key_exists('f', $_GET))

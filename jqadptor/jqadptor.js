@@ -5,11 +5,16 @@
 // 1.利用jq资源快速开发。
 // 
 // 2.更好的兼容性及bug处理。
+define(function(require, exports, module){
 
-(function(win, doc, undefined) {
-    var T = win.T = win.baidu = {
-        ver: "0.1"
-    };
+    var win = window,
+        doc = document;
+
+    var T = win.T = win.baidu || {};
+    
+    var baidu = T;
+
+    T.ver = 0.2;
 
     var noop = $.noop;
 
@@ -205,7 +210,7 @@
 
     T.getStyles = T.dom.getStyles = T.dom.getStyle;
     T.setAttrs = T.dom.setAttrs = T.dom.setAttr;
-    
+
     T.dom.hasAttr = function (element, name){
         return !!($(_g(element)).attr(name));
     };
@@ -292,9 +297,9 @@
 
     // event
     T.event = {};
-    
+
     T.event._listeners = {};
-    
+
     $.each({
         'on': 'bind',
         'un': 'unbind',
@@ -305,19 +310,19 @@
             return $(_g(element))[val](type, listener);
         };
     });
-    
+
     T.event.once = function(element, type, listener){
         element = _g(element);
         function onceListener(event){
             listener.call(element,event);
             baidu.event.un(element, type, onceListener);
         } 
-    
+
         baidu.event.on(element, type, onceListener);
         return element;
     };
-    
-    
+
+
     var eventArg = T.EventArg = T.event.EventArg = T.event.get = function(event){
         var result = $.event.fix(event);
         result._event = event;
@@ -328,11 +333,11 @@
         result._event = event;
         return result;
     };
-    
+
     /*
         TODO 考虑是否保留getEvent这个函数到其他文件
     */
-    
+
     T.event.getEvent = function(event) {
         if (window.event) {
             return window.event;
@@ -357,8 +362,95 @@
             return eventArg(event)[val];
         };
     });
-    
+
+    T.async = {};
+
+    /*
+        TODO T.async 方法与jquery不一致，jquery中没有cancel的方法，也很难模拟，待定。。
+    */
+
+    T.async.Deferred = $.Deferred;
+
+    /**
+     * NOTE jquery的proxy与Tangram bind有些区别,Tangram 执行运行时this，如果不传入则运行时this为函数本身
+     */
+    T.fn = {};
+
+    T.fn.bind = baidu.fn.bind = function(func, scope) {
+        var xargs = arguments.length > 2 ? [].slice.call(arguments, 2) : null;
+        return function () {
+            var fn = baidu.lang.isString(func) ? scope[func] : func,
+                args = (xargs) ? xargs.concat([].slice.call(arguments, 0)) : arguments;
+            return fn.apply(scope || fn, args);
+        };
+    };
+
+    T.fn.blank = noop;
+
+    /**
+     * form
+     */
+    T.form = {};
+
+    var escapeSymbol = function(source) {
+        return String(source).replace(/[#%&+=\/\\\ \　\f\r\n\t]/g, function(all) {
+            return '%' + (0x100 + all.charCodeAt()).toString(16).substring(1).toUpperCase();
+        });
+    };
+
+    T.form.serialize = function(form, replacer){
+        var serialize = $(_g(form)).serializeArray();
+
+        serialize = $.map(serialize, function(n, i){
+            var item = [n.name,escapeSymbol(n.value)];
+
+            if($.isFunction(replacer)) {
+                item[1] = replacer(item[1], item[0]);
+            }
+
+            return item.join('=');
+        });
+        return serialize;
+    };
+
+    T.form.json = function(form, replacer){
+        var serialize = $(_g(form)).serializeArray(),
+            result = {};
+
+        $.each(serialize, function(n, item){
+            var name = item.name,
+                value = escapeSymbol(item.value),
+                oldValue;
+
+            if(result.hasOwnProperty(name)) {
+                if(!$.isArray(result[name])) {
+                    oldValue = result[name];
+                    result[name] = [];
+                    result[name].push(oldValue);
+                }
+                result[name].push(value);            
+            } else {
+                result[name] = value;
+            }
+
+            if($.isFunction(replacer)) {
+                result[name] = replacer(value, name);
+            }
+
+        });
+        return result;
+    };
+
+    T.array = require('./array.js');
+    T.each = T.array.each;
+
+    T.browser = require('./browser.js');
+    T.ie = T.browser.ie;
+
+    T.cookie = require('./cookie.js');
+
+    T.date = require('./date.js');
 
 
-
-})(window, document);
+    win.baidu = T;
+});

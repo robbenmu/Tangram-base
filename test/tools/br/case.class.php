@@ -103,17 +103,35 @@ class Kiss{
 //         }else{
 //             print "<script type='text/javascript' src='{$this->projroot}release/all_release.js'></script>\n";
 //         }
-        
-        print "<script type='text/javascript' src='/jqadptor/jqadptor.js'></script>\n";
-        print "<script type='text/javascript' src='/jqadptor/tangram.js'></script>\n";
 
+        //print "<script type='text/javascript' src='/jqadptor/array.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/object.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/browser.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/cookie.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/date.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/lang.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/number.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/page.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/string.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/sio.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/swf.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/url.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/json.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/jqadptor.js'></script>\n";
+
+        print "<script type='text/javascript' src='/lib/require.js'></script>\n";
+        //print "<script type='text/javascript' src='/jqadptor/tangram.js'></script>\n";
+
+        print "<script>stop();</script>";
 		/* load case and case dependents*/
 		$ps = explode('.', $this->name);
 		array_pop($ps);
 		array_push($ps, 'tools');
 		if(file_exists($this->projroot.'test/'.implode('/', $ps).'.js'))//没有就不加载了
-		print '<script type="text/javascript" src="'.$this->projroot.'test/'.implode('/', $ps).'.js"></script>'."\n";
-		print '<script type="text/javascript" src="'.$this->path.'"></script>'."\n";
+        print '<script>require(["/jqadptor/jqadptor","'.$this->projroot.'test/'.implode('/', $ps).'"])</script>';
+        print '<script>require(["/jqadptor/jqadptor.js","'.$this->path.'"],function(){start();})</script>';
+        //print '<script type="text/javascript" src="'.$this->projroot.'test/'.implode('/', $ps).'.js"></script>'."\n";
+        //print '<script type="text/javascript" src="'.$this->path.'"></script>'."\n";
 	}
 
 	public function match($matcher){
